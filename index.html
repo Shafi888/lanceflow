@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LanceFlow - All-in-One Freelancer Operations & Invoicing Suite. Live invoice builder with PDF export, Client CRM, billable time tracking, and profit margin analytics.">
+  <title>LanceFlow | Freelancer Operations & Invoicing Suite</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheets -->
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/print.css" media="print">
+</head>
+<body>
+
+  <div class="app-layout">
+
+    <!-- =========================================================================
+         SIDEBAR NAVIGATION
+         ========================================================================= -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div>
+        <div class="sidebar-brand">
+          <div class="sidebar-logo-icon">💼</div>
+          <div>
+            <h2 class="sidebar-brand-name">LanceFlow</h2>
+            <span class="sidebar-badge">Pro Suite</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="nav-item active" data-view="dashboard">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </button>
+          <button class="nav-item" data-view="invoices">
+            <span class="nav-icon">🧾</span>
+            <span>Invoices & Studio</span>
+          </button>
+          <button class="nav-item" data-view="clients">
+            <span class="nav-icon">👥</span>
+            <span>Client CRM</span>
+          </button>
+          <button class="nav-item" data-view="tracker">
+            <span class="nav-icon">⏱️</span>
+            <span>Time Tracker</span>
+          </button>
+          <button class="nav-item" data-view="expenses">
+            <span class="nav-icon">📉</span>
+            <span>Expenses & Profit</span>
+          </button>
+          <button class="nav-item" data-view="settings">
+            <span class="nav-icon">⚙️</span>
+            <span>Business Profile</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="btn-sidebar-icon" id="btn-theme-toggle" title="Toggle Dark/Light Mode">
+          <span class="icon">🌙</span>
+        </button>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">LanceFlow v1.0</span>
+      </div>
+    </aside>
+
+    <!-- =========================================================================
+         MAIN APPLICATION CONTENT PANELS
+         ========================================================================= -->
+    <main class="app-content">
+
+      <!-- =====================================================================
+           VIEW 1: FINANCIAL DASHBOARD
+           ===================================================================== -->
+      <section class="view-panel" id="view-dashboard">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Executive Overview</h1>
+            <p class="view-subtitle">Live financial performance, active client receivables, and time metrics</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn-primary" id="btn-dash-new-invoice">
+              <span>+</span> New Invoice
+            </button>
+            <button class="btn-outline" id="btn-dash-start-timer">
+              ⏱️ Track Time
+            </button>
+            <button class="btn-outline" id="btn-dash-new-client">
+              👤 Add Client
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI Metrics Grid -->
+        <div class="kpi-metrics-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon-box kpi-icon-emerald">💰</div>
+            <div class="kpi-content">
+              <span class="kpi-label">Gross Revenue (Paid)</span>
+              <span class="kpi-value text-emerald font-mono" id="kpi-gross-revenue">$0.00</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-box kpi-icon-sky">📈</div>
+            <div class="kpi-content">
+              <span class="kpi-label">Net Profit (After Expenses)</span>
+              <span class="kpi-value font-mono" id="kpi-net-profit">$0.00</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-box kpi-icon-amber">⏳</div>
+            <div class="kpi-content">
+              <span class="kpi-label">Pending & Overdue Invoices</span>
+              <span class="kpi-value text-amber font-mono" id="kpi-pending-invoices">$0.00</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-box kpi-icon-rose">⏱️</div>
+            <div class="kpi-content">
+              <span class="kpi-label">Unbilled Logged Hours</span>
+              <span class="kpi-value font-mono" id="kpi-unbilled-hours">0 hrs ($0.00)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Invoices Table Card -->
+        <div class="table-card">
+          <div class="table-header-box">
+            <h2 class="table-title">Recent Invoices</h2>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Client</th>
+                <th>Issue Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-recent-invoices-body">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 2: INVOICES & LIVE STUDIO
+           ===================================================================== -->
+      <section class="view-panel" id="view-invoices" style="display: none;">
+        <!-- Invoices List Container -->
+        <div id="invoices-table-container">
+          <div class="view-header">
+            <div class="view-title-group">
+              <h1>Invoices Directory</h1>
+              <p class="view-subtitle">Manage client billings, status cycles, and PDF exports</p>
+            </div>
+            <button class="btn-primary" id="btn-invoices-new">
+              <span>+</span> Create New Invoice
+            </button>
+          </div>
+
+          <div class="table-card">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Client</th>
+                  <th>Issue Date</th>
+                  <th>Due Date</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="invoices-list-body">
+                <!-- Dynamically rendered -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Interactive Live Studio Container (Shown when creating/editing) -->
+        <div id="invoice-studio-container" style="display: none;">
+          <div class="view-header">
+            <div class="view-title-group">
+              <h1>Invoice Studio</h1>
+              <p class="view-subtitle">Interactive invoice builder with real-time letterhead preview</p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+              <button class="btn-outline" id="btn-studio-back">← Back to List</button>
+              <button class="btn-outline" id="btn-studio-print">🖨️ Print / Download PDF</button>
+              <button class="btn-primary" id="btn-studio-save">💾 Save Invoice</button>
+            </div>
+          </div>
+
+          <div class="invoice-studio-grid">
+            <!-- Left Side: Form Controls -->
+            <div class="studio-editor-card">
+              <h3 class="table-title">Invoice Details</h3>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="studio-inv-number">Invoice Number</label>
+                  <input type="text" id="studio-inv-number" class="form-input font-mono" value="INV-2026-001">
+                </div>
+                <div class="form-group">
+                  <label for="studio-inv-currency">Currency</label>
+                  <select id="studio-inv-currency" class="form-select">
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="INR">INR (₹)</option>
+                    <option value="CAD">CAD (CA$)</option>
+                    <option value="AUD">AUD (AU$)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="studio-inv-client">Select Client</label>
+                <select id="studio-inv-client" class="form-select">
+                  <!-- Populated via JS -->
+                </select>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="studio-inv-issue-date">Issue Date</label>
+                  <input type="date" id="studio-inv-issue-date" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label for="studio-inv-due-date">Due Date</label>
+                  <input type="date" id="studio-inv-due-date" class="form-input">
+                </div>
+              </div>
+
+              <!-- Line Items Repeater -->
+              <div class="studio-line-items-section">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <label class="form-group label">Itemized Services</label>
+                  <button type="button" class="btn-sm btn-outline" id="btn-studio-add-item">+ Add Line Item</button>
+                </div>
+                <div id="studio-line-items-container" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                  <!-- Injected via JS -->
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="studio-inv-tax-rate">Tax Rate (%)</label>
+                  <input type="number" id="studio-inv-tax-rate" class="form-input font-mono" value="0" step="0.1" min="0">
+                </div>
+                <div class="form-group">
+                  <label for="studio-inv-discount-rate">Discount (%)</label>
+                  <input type="number" id="studio-inv-discount-rate" class="form-input font-mono" value="0" step="0.5" min="0">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="studio-inv-notes">Payment Notes & Bank Instructions</label>
+                <textarea id="studio-inv-notes" class="form-textarea" rows="3" placeholder="Wire transfer details, Stripe link, or payment terms..."></textarea>
+              </div>
+            </div>
+
+            <!-- Right Side: Live Visual Invoice Letterhead -->
+            <div class="invoice-preview-wrapper" id="invoice-preview-sheet">
+              <!-- Live Letterhead rendered dynamically via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 3: CLIENT CRM
+           ===================================================================== -->
+      <section class="view-panel" id="view-clients" style="display: none;">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Client CRM Directory</h1>
+            <p class="view-subtitle">Manage client contracts, contact information, and billing histories</p>
+          </div>
+          <button class="btn-primary" id="btn-add-client">
+            <span>+</span> Add New Client
+          </button>
+        </div>
+
+        <div class="clients-grid" id="clients-cards-grid">
+          <!-- Client cards rendered here -->
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 4: TIME TRACKER & AUTO-INVOICING
+           ===================================================================== -->
+      <section class="view-panel" id="view-tracker" style="display: none;">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Billable Time Tracker</h1>
+            <p class="view-subtitle">Track billable sprint hours and convert logged time into invoices with 1 click</p>
+          </div>
+          <button class="btn-primary" id="btn-convert-time-invoice">
+            🧾 Convert Selected to Invoice
+          </button>
+        </div>
+
+        <!-- Stopwatch Widget -->
+        <div class="timer-widget-card">
+          <div class="timer-widget-left">
+            <div class="stopwatch-dial font-mono" id="tracker-stopwatch-display">00:00:00</div>
+            <div class="timer-inputs-group">
+              <input type="text" id="tracker-input-desc" class="form-input" placeholder="What are you currently working on? (e.g. Next.js Refactor)...">
+              <select id="tracker-select-client" class="form-select">
+                <!-- Populated via JS -->
+              </select>
+            </div>
+          </div>
+          <div class="timer-controls-group">
+            <button class="btn-primary" id="btn-timer-start">▶ Start Timer</button>
+            <button class="btn-outline" id="btn-timer-pause" style="display: none;">⏸ Pause</button>
+            <button class="btn-outline" id="btn-timer-reset">↺ Reset</button>
+            <button class="btn-primary" id="btn-timer-log">💾 Log Entry</button>
+          </div>
+        </div>
+
+        <!-- Logged Hours Table -->
+        <div class="table-card">
+          <div class="table-header-box">
+            <h2 class="table-title">Time Logs</h2>
+            <span class="text-muted" style="font-size: 0.8rem;">Select rows with checkboxes $\rightarrow$ Click "Convert Selected to Invoice"</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 40px;">Select</th>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Description</th>
+                <th>Duration</th>
+                <th>Value</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tracker-logs-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 5: EXPENSES & PROFIT
+           ===================================================================== -->
+      <section class="view-panel" id="view-expenses" style="display: none;">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Expenses & Profit Tracking</h1>
+            <p class="view-subtitle">Track deductible business overhead and calculate net profit margins</p>
+          </div>
+          <button class="btn-primary" id="btn-add-expense">
+            <span>+</span> Log Expense
+          </button>
+        </div>
+
+        <div class="kpi-metrics-grid" style="margin-bottom: 1.5rem;">
+          <div class="kpi-card">
+            <div class="kpi-icon-box kpi-icon-rose">📉</div>
+            <div class="kpi-content">
+              <span class="kpi-label">Total Business Expenses</span>
+              <span class="kpi-value text-rose font-mono" id="kpi-expense-total">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Expense Title</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Tax Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="expenses-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 6: SETTINGS & BUSINESS PROFILE
+           ===================================================================== -->
+      <section class="view-panel" id="view-settings" style="display: none;">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Business Profile & Letterhead</h1>
+            <p class="view-subtitle">Configure your freelance branding, default payment details, and data backups</p>
+          </div>
+        </div>
+
+        <div class="table-card" style="max-width: 700px;">
+          <form id="form-business-profile" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="form-group">
+              <label for="prof-business-name">Business / Agency Name</label>
+              <input type="text" id="prof-business-name" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+              <label for="prof-tagline">Tagline / Professional Title</label>
+              <input type="text" id="prof-tagline" class="form-input">
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="prof-owner-name">Owner / Contact Name</label>
+                <input type="text" id="prof-owner-name" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="prof-email">Email Address</label>
+                <input type="email" id="prof-email" class="form-input" required>
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="prof-phone">Phone Number</label>
+                <input type="text" id="prof-phone" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="prof-tax-id">Tax ID / VAT / EIN Number</label>
+                <input type="text" id="prof-tax-id" class="form-input">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="prof-address">Physical / Business Address</label>
+              <textarea id="prof-address" class="form-textarea" rows="2"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="prof-payment-notes">Default Payment & Wire Instructions</label>
+              <textarea id="prof-payment-notes" class="form-textarea" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: fit-content; margin-top: 0.5rem;">
+              💾 Save Profile Settings
+            </button>
+          </form>
+
+          <hr style="border-color: var(--border-color); margin: 2rem 0 1.5rem 0;">
+
+          <div>
+            <h3 class="table-title" style="margin-bottom: 0.5rem;">Data Export & Backup</h3>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1rem;">Export all invoices, client records, and time logs into a single JSON file.</p>
+            <div style="display: flex; gap: 0.75rem;">
+              <button class="btn-outline" id="btn-export-backup">📁 Export Full Backup (JSON)</button>
+              <label class="btn-outline" style="cursor: pointer;">
+                📥 Import Backup
+                <input type="file" id="file-import-backup" accept=".json" style="display: none;">
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       ADD / EDIT CLIENT MODAL
+       ========================================================================= -->
+  <div class="modal-backdrop" id="client-modal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="client-modal-title">Add New Client</h3>
+        <button class="btn-close-modal" id="btn-close-client-modal">✕</button>
+      </div>
+
+      <form id="form-client-modal" style="display: flex; flex-direction: column; gap: 1rem;">
+        <input type="hidden" id="modal-client-id">
+
+        <div class="form-group">
+          <label for="modal-client-company">Company / Client Name *</label>
+          <input type="text" id="modal-client-company" class="form-input" required placeholder="e.g. Acme Innovations">
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="modal-client-contact">Primary Contact Person</label>
+            <input type="text" id="modal-client-contact" class="form-input" placeholder="e.g. Jane Doe">
+          </div>
+          <div class="form-group">
+            <label for="modal-client-email">Email Address *</label>
+            <input type="email" id="modal-client-email" class="form-input" required placeholder="billing@acme.com">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="modal-client-phone">Phone Number</label>
+            <input type="text" id="modal-client-phone" class="form-input" placeholder="+1 (555) 000-0000">
+          </div>
+          <div class="form-group">
+            <label for="modal-client-rate">Default Hourly Rate ($)</label>
+            <input type="number" id="modal-client-rate" class="form-input font-mono" value="100" min="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="modal-client-address">Billing Address</label>
+          <textarea id="modal-client-address" class="form-textarea" rows="2" placeholder="Street, City, State, ZIP"></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 0.5rem;">
+          💾 Save Client
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- STANDALONE SCRIPT -->
+  <script src="./js/bundle.js"></script>
+</body>
+</html>

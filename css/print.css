@@ -1,0 +1,74 @@
+/* ==========================================================================
+   LanceFlow - Print & PDF Export Stylesheet
+   ========================================================================== */
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Hide all app chrome */
+  .app-sidebar,
+  .app-header,
+  .sidebar-footer,
+  .view-header,
+  .studio-editor-card,
+  .studio-actions-row,
+  .btn-primary,
+  .btn-outline,
+  .btn-icon,
+  .modal-backdrop,
+  .toast-container {
+    display: none !important;
+  }
+
+  .app-layout {
+    display: block !important;
+  }
+
+  .app-content {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .invoice-studio-grid {
+    display: block !important;
+  }
+
+  .invoice-preview-wrapper {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+  }
+
+  .inv-bill-to-box {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .inv-preview-table th {
+    border-bottom: 2px solid #000000 !important;
+  }
+
+  .inv-preview-table td {
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .grand-total-row {
+    border-top: 2px solid #000000 !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+}
